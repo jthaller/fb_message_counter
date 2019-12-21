@@ -35,6 +35,8 @@ sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebo
 
 s_early = friend('Sarah Early')
 
+thomas = friend('Thomas Malchodi')
+thomas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\ThomasMalchodi_PFq8d7gKmg\\'
 lucas = friend('Lucas Estrada')
 lucas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\LucasEstrada_mKLuymR_pg\\'
 ## FUNCTION: write_to_csv
@@ -218,34 +220,15 @@ def cum_sum(person):
         sorted_by_date = df.sort_values(by=['dates'])
         sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
         matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+        plt.figsize=(15,5)
+        plt.title('Total Messages Exchange between me and ' + person.name)
         sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
         os.chdir(person.messages_file_dir)
         plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
 
-cum_sum(lucas)
+cum_sum(thomas)
 
 
-# def cum_sum(person):
-#     # person.messages.insert(3, "cum", np.cumsum(person.messages.iloc[:,0].value_counts().values), True)
-#     cumframe = pd.DataFrame({"cum":np.flip(np.cumsum(person.messages.iloc[:,0]))})
-#     new = pd.concat([person.messages, cumframe], axis=1)
-#     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
-#     plt.figure(figsize=(15,5))
-#     plt.title('Cumulative Sum of messages ' + person.name)
-#     # x = person.messages.iloc[:,0].value_counts().index
-#     # y = person.messages.cum
-#     # y = np.cumsum(rohan.messages.iloc[:,0].value_counts().values)
-#     sns.lineplot(x=person.messages.date,y=new.cum)
-#     os.chdir(person.messages_file_dir)
-#     plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
-
-    df = pd.DataFrame({"dates": lucas.messages.iloc[:,0].value_counts().index,"counts":lucas.messages.iloc[:,0].value_counts().values})
-    print(df)
-    sorted_by_date = df.sort_values(by=['dates'])
-    print(sorted_by_date)
-    sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
-    print(sorted_by_date)
-    sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
 
 
 
@@ -262,7 +245,7 @@ def analyze(person):
     plot_for_friend(person)
     plot_comparison(person)
     cum_sum(person)
-analyze(lucas )
+analyze(thomas)
 
 # df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
 # print('Ordering by date...')
