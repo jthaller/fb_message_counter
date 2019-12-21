@@ -220,7 +220,7 @@ def cum_sum(person):
         sorted_by_date = df.sort_values(by=['dates'])
         sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
         matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
-        plt.figsize=(15,5)
+        plt.figure(figsize=(15,5))
         plt.title('Total Messages Exchange between me and ' + person.name)
         sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
         os.chdir(person.messages_file_dir)
@@ -252,16 +252,30 @@ analyze(thomas)
 # sort_data_by_dates(df,rohan)
 # cum_sum(rohan)
 
+rohan.messages.iloc[:,0]
+ message_stamps_for_friend(rohan).iloc[:,0]
 
 def cum_sum_comparison(person):
-    cumframe = pd.DataFrame({"cum":np.flip(np.cumsum(person.messages.iloc[:,0].value_counts().values))})
-    new = pd.concat([person.messages, cumframe], axis=1)
+    friend_messages = message_stamps_for_friend(person)
+    my_messages = person.messages.loc[(person.messages.sender == me.name)]
+
+    df_friend = pd.DataFrame({"dates": friend_messages.iloc[:,0].value_counts().index,"counts":friend_messages.iloc[:,0].value_counts().values})
+    sorted_by_date_friend = df_friend.sort_values(by=['dates'])
+    sorted_by_date_friend['cum'] = sorted_by_date_friend['counts'].cumsum()
+
+    df_me = pd.DataFrame({"dates": my_messages.iloc[:,0].value_counts().index,"counts":my_messages.iloc[:,0].value_counts().values})
+    sorted_by_date_me = df_me.sort_values(by=['dates'])
+    sorted_by_date_me['cum'] = sorted_by_date_me['counts'].cumsum()
+
     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
-    plt.figure(figsize=(15,5))
-    plt.title('Cumulative Sum of messages ' + person.name)
-    # x = person.messages.iloc[:,0].value_counts().index
-    # y = person.messages.cum
-    # y = np.cumsum(rohan.messages.iloc[:,0].value_counts().values)
-    sns.lineplot(x=person.messages.date,y=new.cum)
+
+
+    plt.subplots(figsize=(15,5))
+    sns.lineplot(x=sorted_by_date_friend['dates'],y=sorted_by_date_friend['cum'], label = str(person.name),color="red")
+    sns.lineplot(x=sorted_by_date_me['dates'],y=sorted_by_date_me['cum'], label= me.name,color="#1155dd")
+    plt.title('Friendship Comparison - Cumulative Messages')
+    plt.legend(loc=0);
     os.chdir(person.messages_file_dir)
-    plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
+    plt.savefig(str(person.name + "_comparison_cumsum.png"), dpi=200)
+
+cum_sum_comparison(thomas)
