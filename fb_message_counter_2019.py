@@ -22,7 +22,7 @@ class friend:
         self.total_messages_count = total_messages_count
         self.message_stamps = message_stamps #message stamps is a data frame with only their name
         self.messages = messages #sets a dataframe with al the chat data to be an attibute of the person. useful when you have several people
-        self.messages_file_dir = file_dir
+        self.messages_file_dir = file_dir #make sure you add an extra / or \\ after the file name. Otherwise when looking for the html file directory, it won't be like ~\message1.html
 
 me = friend('Jeremy Thaller') #...maybe person would have been a more apt name for the class
 
@@ -35,7 +35,8 @@ sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebo
 
 s_early = friend('Sarah Early')
 
-
+lucas = friend('Lucas Estrada')
+lucas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\LucasEstrada_mKLuymR_pg\\'
 ## FUNCTION: write_to_csv
 ## Params: filename, person
 ## returns: prints the total messages sent by me and the friend
@@ -133,15 +134,9 @@ def sort_data_by_dates(df,person):
     return person.messages
 
 
-extract_data_to_csv_auto(sarah)
-
-
 
 # df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
 # df.describe()
-
-df.sender.value_counts()
-sarah.messages = sort_data_by_dates(df)
 
 ## Function: message_stamps_for_friend
 ## params: person
@@ -166,9 +161,10 @@ def plot_for_friend(person):
     os.chdir(person.messages_file_dir)
     plt.savefig(str(person.name + "_barplot.png"), dpi=200)
 
-plot_for_friend(sarah)
 
-#this is tricky for me
+## Function: plot_comparison
+## params: person
+## returns: plots
 def plot_comparison(person):
     friend_x = message_stamps_for_friend(person).iloc[:,0].value_counts().index
     friend_y = person.message_stamps.iloc[:,0].value_counts().values
@@ -200,7 +196,6 @@ def plot_comparison(person):
 
 
 plot_comparison(sarah)
-
 plot_comparison(rohan)
 
 
@@ -210,7 +205,7 @@ supervoid.iloc[:,0].value_counts()
 
 
 
-#idk wtf this is plotting
+#idk wtf this is plotting...
 plt.figure(figsize=(15,5))
 plt.title('Messages sent per day by ' + rohan.name)
 sns.distplot(rohan.messages.iloc[:,0].value_counts())
@@ -218,16 +213,39 @@ sns.distplot(rohan.messages.iloc[:,0].value_counts())
 
 
 
-#this is supposed to work but doesn't. Might come back to figure out why
-#--------------------------------------------
-# total_plot = sns.countplot(x=df.date, data=df)
-# total_plot.set_xticks(np.arange(len(df.date)))
-# total_plot.set_xticklabels(df.date)
-# plt.xticks(rotation=30)
-# plt.show()
-#-----------------------------------------------
+def cum_sum(person):
+        df = pd.DataFrame({"dates": person.messages.iloc[:,0].value_counts().index,"counts":person.messages.iloc[:,0].value_counts().values})
+        sorted_by_date = df.sort_values(by=['dates'])
+        sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
+        matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+        sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
+        os.chdir(person.messages_file_dir)
+        plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
+
+cum_sum(lucas)
 
 
+# def cum_sum(person):
+#     # person.messages.insert(3, "cum", np.cumsum(person.messages.iloc[:,0].value_counts().values), True)
+#     cumframe = pd.DataFrame({"cum":np.flip(np.cumsum(person.messages.iloc[:,0]))})
+#     new = pd.concat([person.messages, cumframe], axis=1)
+#     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+#     plt.figure(figsize=(15,5))
+#     plt.title('Cumulative Sum of messages ' + person.name)
+#     # x = person.messages.iloc[:,0].value_counts().index
+#     # y = person.messages.cum
+#     # y = np.cumsum(rohan.messages.iloc[:,0].value_counts().values)
+#     sns.lineplot(x=person.messages.date,y=new.cum)
+#     os.chdir(person.messages_file_dir)
+#     plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
+
+    df = pd.DataFrame({"dates": lucas.messages.iloc[:,0].value_counts().index,"counts":lucas.messages.iloc[:,0].value_counts().values})
+    print(df)
+    sorted_by_date = df.sort_values(by=['dates'])
+    print(sorted_by_date)
+    sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
+    print(sorted_by_date)
+    sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
 
 
 
@@ -244,33 +262,13 @@ def analyze(person):
     plot_for_friend(person)
     plot_comparison(person)
     cum_sum(person)
-analyze(rohan)
+analyze(lucas )
 
+# df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
+# print('Ordering by date...')
+# sort_data_by_dates(df,rohan)
+# cum_sum(rohan)
 
-rohan.messages.date
-def cum_sum(person):
-    # person.messages.insert(3, "cum", np.cumsum(person.messages.iloc[:,0].value_counts().values), True)
-    cumframe = pd.DataFrame({"cum":np.flip(np.cumsum(person.messages.iloc[:,0].value_counts().values))})
-    new = pd.concat([person.messages, cumframe], axis=1)
-    matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
-    plt.figure(figsize=(15,5))
-    plt.title('Cumulative Sum of messages ' + person.name)
-    # x = person.messages.iloc[:,0].value_counts().index
-    # y = person.messages.cum
-    # y = np.cumsum(rohan.messages.iloc[:,0].value_counts().values)
-    sns.lineplot(x=person.messages.date,y=new.cum)
-    os.chdir(person.messages_file_dir)
-    plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
-
-np.cumsum(rohan.messages.iloc[:,0].value_counts().values)
-
-new
-cum_sum(rohan)
-
-cumframe = pd.DataFrame({"cum":np.cumsum(rohan.messages.iloc[:,0].value_counts().values)})
-new = pd.concat([rohan.messages, cumframe], axis=1)
-
-np.flip(np.cumsum(rohan.messages.iloc[:,0].value_counts().values))
 
 def cum_sum_comparison(person):
     cumframe = pd.DataFrame({"cum":np.flip(np.cumsum(person.messages.iloc[:,0].value_counts().values))})
