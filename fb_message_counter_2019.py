@@ -35,6 +35,9 @@ sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebo
 
 s_early = friend('Sarah Early')
 
+
+karol = friend('Karol Regula')
+karol.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\KarolRegula_4_fm6DtwTw\\"
 thomas = friend('Thomas Malchodi')
 thomas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\ThomasMalchodi_PFq8d7gKmg\\'
 lucas = friend('Lucas Estrada')
@@ -56,6 +59,7 @@ def write_to_csv(filename,person):
     # print(senders[5].contents[0])
     i=0
     with open("chatdata.csv","a") as fp:
+        # with open("chatdata.csv","a", encoding = "utf-8") as fp:
         # csvfile = csv.writer(open("chatdata.csv","w"))
         csvfile = csv.writer(fp)
         for date in dates:
@@ -107,6 +111,7 @@ def extract_data_to_csv_auto(person):
     csvfile.close() #clear the spreadsheet if it exists.
 
     with open("chatdata.csv","w") as fp:
+        # with open("chatdata.csv","w", encoding = "utf-8") as fp:
         csvfile = csv.writer(fp)
         csvfile.writerow(["date", "sender"])
 
@@ -188,13 +193,6 @@ supervoid.iloc[:,0].value_counts()
 
 
 
-#idk wtf this is plotting...
-plt.figure(figsize=(15,5))
-plt.title('Messages sent per day by ' + rohan.name)
-sns.distplot(rohan.messages.iloc[:,0].value_counts())
-
-
-
 
 def cum_sum(person):
         df = pd.DataFrame({"dates": person.messages.iloc[:,0].value_counts().index,"counts":person.messages.iloc[:,0].value_counts().values})
@@ -202,12 +200,11 @@ def cum_sum(person):
         sorted_by_date['cum'] = sorted_by_date['counts'].cumsum()
         matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
         plt.figure(figsize=(15,5))
-        plt.title('Total Messages Exchange between me and ' + person.name)
-        sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
+        plt.title('Total Messages Exchanged Between Me and ' + person.name)
+        ax = sns.lineplot(x=sorted_by_date['dates'],y=sorted_by_date['cum'])
+        ax.set(ylabel='Total Messages')
         os.chdir(person.messages_file_dir)
         plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
-
-cum_sum(thomas)
 
 
 
@@ -226,8 +223,9 @@ def cum_sum_comparison(person):
     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
     plt.subplots(figsize=(15,5))
     sns.lineplot(x=sorted_by_date_friend['dates'],y=sorted_by_date_friend['cum'], label = str(person.name),color="red")
-    sns.lineplot(x=sorted_by_date_me['dates'],y=sorted_by_date_me['cum'], label= me.name,color="#1155dd")
+    ax = sns.lineplot(x=sorted_by_date_me['dates'],y=sorted_by_date_me['cum'], label= me.name,color="#1155dd")
     plt.title('Friendship Comparison - Cumulative Messages')
+    ax.set(ylabel='Total Messages')
     plt.legend(loc=0);
     os.chdir(person.messages_file_dir)
     plt.savefig(str(person.name + "_comparison_cumsum.png"), dpi=200)
@@ -247,10 +245,12 @@ def analyze(person):
     plot_comparison(person)
     cum_sum(person)
     cum_sum_comparison(person)
-analyze(thomas)
-
-analyze(sarah)
 
 
-
-cum_sum_comparison(sarah)
+os.chdir(karol.messages_file_dir)
+df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
+sort_data_by_dates(df,karol)
+plot_for_friend(karol)
+plot_comparison(karol)
+cum_sum(karol)
+cum_sum_comparison(karol)
