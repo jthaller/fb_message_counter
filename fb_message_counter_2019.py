@@ -116,12 +116,6 @@ def extract_data_to_csv_auto(person):
     print("---------DONE---------")
 
 
-
-
-def remove_hours(df):
-    pass
-
-
 ## Fucntion: sort_data_by_dates
 ## parameters: data frame df
 ## returns: a dataframe with the dates sorted in the format of a timeframe object. Also prints the first few sorted columns
@@ -131,14 +125,10 @@ def remove_hours(df):
 def sort_data_by_dates(df,person):
     df['date'] = pd.to_datetime(df.date)
     df.head()
-    print(df.sort_values('date').head())
+    # print(df.sort_values('date').head())
     person.messages = df.sort_values('date')
     return person.messages
 
-
-
-# df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
-# df.describe()
 
 ## Function: message_stamps_for_friend
 ## params: person
@@ -179,8 +169,6 @@ def plot_comparison(person):
     me_y = person.messages.loc[(person.messages.sender == me.name)].iloc[:,0].value_counts().values
 
     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
-
-
     fig, ax = plt.subplots(figsize=(15,5))
     ax.bar(friend_x, friend_y, label = str(person.name),color="red", width=4,alpha=.5 )
     ax.bar(me_x,me_y, label= me.name,color="#1155dd", width=4,alpha=.5)
@@ -188,13 +176,6 @@ def plot_comparison(person):
     ax.legend(loc=0);
     os.chdir(person.messages_file_dir)
     plt.savefig(str(person.name + "_friendship_comparison.png"), dpi=200)
-
-    # plt.figure(figsize=(15,5))
-    # plt.title('Messages sent per day compasion')
-    # plt.bar(friend_x, friend_y)
-    # plt.bar(me_x,me_y)
-    # plt.legend()
-    # plt.show()
 
 
 plot_comparison(sarah)
@@ -230,6 +211,26 @@ cum_sum(thomas)
 
 
 
+def cum_sum_comparison(person):
+    friend_messages = message_stamps_for_friend(person)
+    my_messages = person.messages.loc[(person.messages.sender == me.name)]
+
+    df_friend = pd.DataFrame({"dates": friend_messages.iloc[:,0].value_counts().index,"counts":friend_messages.iloc[:,0].value_counts().values})
+    sorted_by_date_friend = df_friend.sort_values(by=['dates'])
+    sorted_by_date_friend['cum'] = sorted_by_date_friend['counts'].cumsum()
+
+    df_me = pd.DataFrame({"dates": my_messages.iloc[:,0].value_counts().index,"counts":my_messages.iloc[:,0].value_counts().values})
+    sorted_by_date_me = df_me.sort_values(by=['dates'])
+    sorted_by_date_me['cum'] = sorted_by_date_me['counts'].cumsum()
+
+    matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+    plt.subplots(figsize=(15,5))
+    sns.lineplot(x=sorted_by_date_friend['dates'],y=sorted_by_date_friend['cum'], label = str(person.name),color="red")
+    sns.lineplot(x=sorted_by_date_me['dates'],y=sorted_by_date_me['cum'], label= me.name,color="#1155dd")
+    plt.title('Friendship Comparison - Cumulative Messages')
+    plt.legend(loc=0);
+    os.chdir(person.messages_file_dir)
+    plt.savefig(str(person.name + "_comparison_cumsum.png"), dpi=200)
 
 
 
@@ -245,37 +246,11 @@ def analyze(person):
     plot_for_friend(person)
     plot_comparison(person)
     cum_sum(person)
+    cum_sum_comparison(person)
 analyze(thomas)
 
-# df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
-# print('Ordering by date...')
-# sort_data_by_dates(df,rohan)
-# cum_sum(rohan)
-
-rohan.messages.iloc[:,0]
- message_stamps_for_friend(rohan).iloc[:,0]
-
-def cum_sum_comparison(person):
-    friend_messages = message_stamps_for_friend(person)
-    my_messages = person.messages.loc[(person.messages.sender == me.name)]
-
-    df_friend = pd.DataFrame({"dates": friend_messages.iloc[:,0].value_counts().index,"counts":friend_messages.iloc[:,0].value_counts().values})
-    sorted_by_date_friend = df_friend.sort_values(by=['dates'])
-    sorted_by_date_friend['cum'] = sorted_by_date_friend['counts'].cumsum()
-
-    df_me = pd.DataFrame({"dates": my_messages.iloc[:,0].value_counts().index,"counts":my_messages.iloc[:,0].value_counts().values})
-    sorted_by_date_me = df_me.sort_values(by=['dates'])
-    sorted_by_date_me['cum'] = sorted_by_date_me['counts'].cumsum()
-
-    matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
+analyze(sarah)
 
 
-    plt.subplots(figsize=(15,5))
-    sns.lineplot(x=sorted_by_date_friend['dates'],y=sorted_by_date_friend['cum'], label = str(person.name),color="red")
-    sns.lineplot(x=sorted_by_date_me['dates'],y=sorted_by_date_me['cum'], label= me.name,color="#1155dd")
-    plt.title('Friendship Comparison - Cumulative Messages')
-    plt.legend(loc=0);
-    os.chdir(person.messages_file_dir)
-    plt.savefig(str(person.name + "_comparison_cumsum.png"), dpi=200)
 
-cum_sum_comparison(thomas)
+cum_sum_comparison(sarah)
