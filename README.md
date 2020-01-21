@@ -1,6 +1,5 @@
 ## fb_message_counter
-Facebook allows users to download their data in the format of html files. This python program takes a given friend's name as well as the directory in which the html file or files are located, and returns several interesting graphics and statistics.
-
+Facebook allows users to download their data in the format of html files. This python program takes a given friend's name as well as the directory in which the html file or files are located, and returns several interesting graphics and statistics. Below is an example of my message of my older brother. I believe the large spike is the deadline for choosing which grad school offer to accept.
 ## Message Count Per Day Barplot
 ![alt text](https://github.com/jthaller/fb_message_counter/blob/master/example_images/David_Thaller_barplot.png "Example Barplot")
 
