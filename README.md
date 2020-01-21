@@ -6,7 +6,7 @@ Facebook allows users to download their data in the format of html files. This p
 
 
 ## Message Count Per Day Comparison Barplot
-![alt text](https://github.com/jthaller/fb_message_counter/blob/master/exampe_images/David_Thaller_friendship_comparison.png "Example Barplot Comparison")
+![alt text](https://github.com/jthaller/fb_message_counter/blob/master/example_images/David_Thaller_friendship_comparison.png "Example Barplot Comparison")
 
 
 ## Cumulative Sum Plot
