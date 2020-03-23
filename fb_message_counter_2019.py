@@ -1,3 +1,11 @@
+## fb_message_counter_2019
+## This takes the html file(s) that facebook gives you when you download your dataframe
+## and creates several plots for it. To run it, you must do the following
+## 1. Change the line me = friend('put your name here as shown on facebook')
+## 2. yourfriendsname = friend('put your friend's name here as shown on facebook')
+## 3. yourfriendsname.messages_file_dir = 'put the file path the the folder that contains the html files'
+## 4. run analyze(yourfriendsname). It's at the bottom of this python script.
+
 import pandas as pd
 from bs4 import BeautifulSoup
 import csv
@@ -24,7 +32,7 @@ class friend:
         self.messages = messages #sets a dataframe with al the chat data to be an attibute of the person. useful when you have several people
         self.messages_file_dir = file_dir #make sure you add an extra / or \\ after the file name. Otherwise when looking for the html file directory, it won't be like ~\message1.html
 
-me = friend('Jeremy Thaller') #...maybe person would have been a more apt name for the class
+me = friend('Jeremy Thaller') #...maybe person would have been a more apt name for the class, but this is the only oddity
 
 #friends to analize
 rohan = friend('Rohan Kadambi')
@@ -34,7 +42,7 @@ sarah = friend('Sarah Ritzmann')
 sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahRitzmann_qZoMJVMdAQ\\"
 
 s_early = friend('Sarah Early')
-
+s_early.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahEarly_tW04iuKGdQ\\'
 
 karol = friend('Karol Regula')
 karol.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\KarolRegula_4_fm6DtwTw\\"
@@ -42,6 +50,9 @@ thomas = friend('Thomas Malchodi')
 thomas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\ThomasMalchodi_PFq8d7gKmg\\'
 lucas = friend('Lucas Estrada')
 lucas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\LucasEstrada_mKLuymR_pg\\'
+david = friend('David Thaller')
+david.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\DavidThaller_tcugDXxZlg\\"
+
 ## FUNCTION: write_to_csv
 ## Params: filename, person
 ## returns: prints the total messages sent by me and the friend
@@ -144,8 +155,11 @@ def message_stamps_for_friend(person):
     person.message_stamps = person.messages.loc[(person.messages.sender == person.name)] #used to be df.sender
     return person.message_stamps
 
+## Function: plot_for_friend
+## params: person
+## return: none
 #Take a person instance as object and plots messages sent by them
-#note, df.iloc[:,0].value_counts() gives number of messages on a given date
+# note, df.iloc[:,0].value_counts() gives number of messages on a given date
 def plot_for_friend(person):
     # fig = plt.plot()
     matplotlib.rcParams.update({'font.size': 14, 'font.family': 'serif'})
@@ -162,6 +176,7 @@ def plot_for_friend(person):
 ## Function: plot_comparison
 ## params: person
 ## returns: plots
+## plots the messages sent by each person on each day together
 def plot_comparison(person):
     friend_x = message_stamps_for_friend(person).iloc[:,0].value_counts().index
     friend_y = person.message_stamps.iloc[:,0].value_counts().values
@@ -183,17 +198,17 @@ def plot_comparison(person):
     plt.savefig(str(person.name + "_friendship_comparison.png"), dpi=200)
 
 
-plot_comparison(sarah)
-plot_comparison(rohan)
 
-
-
+# In this data set there's a strange dip in message frequencies. Upon investigation, I think this was my 10 day trip to the UK
 supervoid = sarah.messages.loc[(sarah.messages.date >= pd.to_datetime('Jan 21, 2018, 12:13 AM')) & (sarah.messages.date <= pd.to_datetime('May 21, 2018, 12:29 PM'))]
 supervoid.iloc[:,0].value_counts()
 
 
 
-
+## Fucntion: cum_sum
+## params: person
+## return: none
+## creates a figure for the cumulative sum of all the messages sent between you and your friend 
 def cum_sum(person):
         df = pd.DataFrame({"dates": person.messages.iloc[:,0].value_counts().index,"counts":person.messages.iloc[:,0].value_counts().values})
         sorted_by_date = df.sort_values(by=['dates'])
@@ -207,7 +222,11 @@ def cum_sum(person):
         plt.savefig(str(person.name + "_cumsum.png"), dpi=200)
 
 
-
+## Fucntion: cum_sum_comparison
+## params: person
+## return: none
+## creates a plot for the cumulative sum of the messages sent by you, and the cum sum of the messages sent by your friend
+## To be clear, this creates one figure with two lineplots on it
 def cum_sum_comparison(person):
     friend_messages = message_stamps_for_friend(person)
     my_messages = person.messages.loc[(person.messages.sender == me.name)]
@@ -232,6 +251,17 @@ def cum_sum_comparison(person):
 
 
 
+## If you have a friend with non-standard characters in their name (or in the messages)
+## Karol is my polish friend, and his facebook name has a strange character in it. This deals with that
+os.chdir(karol.messages_file_dir)
+df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
+sort_data_by_dates(df,karol)
+plot_for_friend(karol)
+plot_comparison(karol)
+cum_sum(karol)
+cum_sum_comparison(karol)
+
+
 ## One method to rule them all.
 ## instanciate a person properly and this does everything.
 def analyze(person):
@@ -246,11 +276,4 @@ def analyze(person):
     cum_sum(person)
     cum_sum_comparison(person)
 
-
-os.chdir(karol.messages_file_dir)
-df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
-sort_data_by_dates(df,karol)
-plot_for_friend(karol)
-plot_comparison(karol)
-cum_sum(karol)
-cum_sum_comparison(karol)
+analyze(s_early)
