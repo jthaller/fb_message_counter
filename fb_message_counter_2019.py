@@ -32,26 +32,6 @@ class friend:
         self.messages = messages #sets a dataframe with al the chat data to be an attibute of the person. useful when you have several people
         self.messages_file_dir = file_dir #make sure you add an extra / or \\ after the file name. Otherwise when looking for the html file directory, it won't be like ~\message1.html
 
-me = friend('Jeremy Thaller') #...maybe person would have been a more apt name for the class, but this is the only oddity
-
-#friends to analize
-rohan = friend('Rohan Kadambi')
-rohan.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\RohanKadambi_NQvgRgwgtQ\\'
-
-sarah = friend('Sarah Ritzmann')
-sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahRitzmann_qZoMJVMdAQ\\"
-
-s_early = friend('Sarah Early')
-s_early.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahEarly_tW04iuKGdQ\\'
-
-karol = friend('Karol Regula')
-karol.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\KarolRegula_4_fm6DtwTw\\"
-thomas = friend('Thomas Malchodi')
-thomas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\ThomasMalchodi_PFq8d7gKmg\\'
-lucas = friend('Lucas Estrada')
-lucas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\LucasEstrada_mKLuymR_pg\\'
-david = friend('David Thaller')
-david.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\DavidThaller_tcugDXxZlg\\"
 
 ## FUNCTION: write_to_csv
 ## Params: filename, person
@@ -60,7 +40,6 @@ david.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebo
 # the dates of the file are give in the format of Dec 16, 2019, 10:38 PM
 def write_to_csv(filename,person):
     # csvfile = csv.writer(open("chatdata.csv","a"))
-
     with open(filename, 'rb') as html:
         soup = BeautifulSoup(html)
     # get the dates
@@ -199,12 +178,6 @@ def plot_comparison(person):
 
 
 
-# In this data set there's a strange dip in message frequencies. Upon investigation, I think this was my 10 day trip to the UK
-supervoid = sarah.messages.loc[(sarah.messages.date >= pd.to_datetime('Jan 21, 2018, 12:13 AM')) & (sarah.messages.date <= pd.to_datetime('May 21, 2018, 12:29 PM'))]
-supervoid.iloc[:,0].value_counts()
-
-
-
 ## Fucntion: cum_sum
 ## params: person
 ## return: none
@@ -251,15 +224,6 @@ def cum_sum_comparison(person):
 
 
 
-## If you have a friend with non-standard characters in their name (or in the messages)
-## Karol is my polish friend, and his facebook name has a strange character in it. This deals with that
-os.chdir(karol.messages_file_dir)
-df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
-sort_data_by_dates(df,karol)
-plot_for_friend(karol)
-plot_comparison(karol)
-cum_sum(karol)
-cum_sum_comparison(karol)
 
 
 ## One method to rule them all.
@@ -276,4 +240,42 @@ def analyze(person):
     cum_sum(person)
     cum_sum_comparison(person)
 
-analyze(s_early)
+if __name__ == "__main__":
+    me = friend('Jeremy Thaller') #...maybe person would have been a more apt name for the class, but this is the only oddity
+
+#friends to analize
+    rohan = friend('Rohan Kadambi')
+    rohan.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\RohanKadambi_NQvgRgwgtQ\\'
+
+    sarah = friend('Sarah Ritzmann')
+    sarah.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahRitzmann_qZoMJVMdAQ\\"
+
+    s_early = friend('Sarah Early')
+    s_early.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\SarahEarly_tW04iuKGdQ\\'
+
+    karol = friend('Karol Regula')
+    karol.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\KarolRegula_4_fm6DtwTw\\"
+    thomas = friend('Thomas Malchodi')
+    thomas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\ThomasMalchodi_PFq8d7gKmg\\'
+    lucas = friend('Lucas Estrada')
+    lucas.messages_file_dir = 'C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\LucasEstrada_mKLuymR_pg\\'
+    david = friend('David Thaller')
+    david.messages_file_dir = "C:\\Users\\jerem\\OneDrive\\Documents\\Python\\facebook_messanger_counter\\facebook-jeremythaller\\messages\\inbox\\DavidThaller_tcugDXxZlg\\"
+    
+    
+    
+    ## If you have a friend with non-standard characters in their name (or in the messages)
+## Karol is my polish friend, and his facebook name has a strange character in it. This deals with that
+    os.chdir(karol.messages_file_dir)
+    df = pd.read_csv("chatdata.csv", encoding = "ISO-8859-1")
+    sort_data_by_dates(df,karol)
+    plot_for_friend(karol)
+    plot_comparison(karol)
+    cum_sum(karol)
+    cum_sum_comparison(karol)
+    
+    anayze(s_early)
+    
+# In this data set there's a strange dip in message frequencies. Upon investigation, I think this was my 10 day trip to the UK
+    supervoid = sarah.messages.loc[(sarah.messages.date >= pd.to_datetime('Jan 21, 2018, 12:13 AM')) & (sarah.messages.date <= pd.to_datetime('May 21, 2018, 12:29 PM'))]
+    supervoid.iloc[:,0].value_counts()
